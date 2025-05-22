@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Are You a Mesomorph? Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ff8c42 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="white" opacity="0.05"/><circle cx="20" cy="80" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 50px;
+            max-width: 650px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .quiz-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e, #ff8c42);
+            border-radius: 27px;
+            z-index: -1;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .quiz-header h1 {
+            color: white;
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            font-weight: 800;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .quiz-header p {
+            color: white;
+            font-size: 1em;
+            line-height: 1.7;
+            font-weight: 400;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .question {
+            background: linear-gradient(135deg, #fff5f0 0%, #ffeee6 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(255, 107, 53, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        }
+
+        .question h3 {
+            color: #d2691e;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            transition: width 0.3s ease;
+        }
+
+        .option:hover {
+            background: #fff5f0;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2);
+            border-color: #ff6b35;
+        }
+
+        .option:hover::before {
+            width: 4px;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            transform: scale(1.4);
+            accent-color: #ff6b35;
+            position: relative;
+            z-index: 2;
+        }
+
+        .option label {
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #333;
+            position: relative;
+            z-index: 2;
+        }
+
+        .option input[type="radio"]:checked + label {
+            color: #d2691e;
+            font-weight: 700;
+        }
+
+        .option:has(input[type="radio"]:checked) {
+            background: linear-gradient(135deg, #fff5f0 0%, #ffe4d6 100%);
+            border-color: #ff6b35;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.25);
+        }
+
+        .option:has(input[type="radio"]:checked)::before {
+            width: 4px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.3em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .submit-btn:disabled::before {
+            display: none;
+        }
+
+        .results {
+            display: none;
+            border-radius: 20px;
+            padding: 35px;
+            margin-top: 30px;
+            animation: slideIn 0.6s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .results h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .results p {
+            font-size: 1.2em;
+            line-height: 1.8;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .mesomorph-result {
+            background: linear-gradient(135deg, #e8f7e8 0%, #f0f9f0 100%);
+            border: 2px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .mesomorph-result::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+        }
+
+        .mesomorph-result h2 {
+            color: #2E7D32;
+        }
+
+        .mesomorph-result p {
+            color: #388E3C;
+        }
+
+        .mixed-result {
+            background: linear-gradient(135deg, #fff3e0 0%, #fef7f0 100%);
+            border: 2px solid rgba(255, 152, 0, 0.3);
+        }
+
+        .mixed-result::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(135deg, #FF9800 0%, #FFC107 100%);
+        }
+
+        .mixed-result h2 {
+            color: #E65100;
+        }
+
+        .mixed-result p {
+            color: #F57C00;
+        }
+
+        .reset-btn {
+            display: none;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .reset-btn:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #343a40 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .quiz-header h1 {
+                font-size: 2em;
+            }
+            
+            .question {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1>Are you a mesomorph?</h1>
+            <p>Ever wondered if you're actually a mesomorph or just feeling like one? Take this quick quiz to check and see where you stand.</p>
+        </div>
+
+        <form id="mesomorphQuiz">
+            <div class="question">
+                <h3>1. Your build is:</h3>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q1a" name="q1" value="A">
+                        <label for="q1a">Lean</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q1b" name="q1" value="B">
+                        <label for="q1b">Muscular</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q1c" name="q1" value="C">
+                        <label for="q1c">Curvy</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>2. Muscle gain is:</h3>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q2a" name="q2" value="A">
+                        <label for="q2a">Hard</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q2b" name="q2" value="B">
+                        <label for="q2b">Easy</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q2c" name="q2" value="C">
+                        <label for="q2c">Moderate</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>3. Weight changes:</h3>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q3a" name="q3" value="A">
+                        <label for="q3a">Rarely</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q3b" name="q3" value="B">
+                        <label for="q3b">Easily</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q3c" name="q3" value="C">
+                        <label for="q3c">Sometimes</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Get My Results</button>
+        </form>
+
+        <div id="results" class="results">
+            <h2 id="resultTitle"></h2>
+            <p id="resultText"></p>
+            <button type="button" class="reset-btn" id="resetBtn">Take Quiz Again</button>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('mesomorphQuiz');
+        const results = document.getElementById('results');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultText = document.getElementById('resultText');
+        const submitBtn = document.getElementById('submitBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Check if all questions are answered
+        function checkFormComplete() {
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            const q3 = document.querySelector('input[name="q3"]:checked');
+            
+            if (q1 && q2 && q3) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        // Add event listeners to all radio buttons
+        const radioButtons = document.querySelectorAll('input[type="radio"]');
+        radioButtons.forEach(function(radio) {
+            radio.addEventListener('change', checkFormComplete);
+        });
+
+        // Make entire option clickable
+        const options = document.querySelectorAll('.option');
+        options.forEach(function(option) {
+            option.addEventListener('click', function() {
+                const radio = option.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.checked = true;
+                    checkFormComplete();
+                }
+            });
+        });
+
+        // Handle form submission
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Get the selected answers
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            const q3 = document.querySelector('input[name="q3"]:checked');
+            
+            if (!q1 || !q2 || !q3) {
+                alert('Please answer all questions!');
+                return;
+            }
+            
+            // Count B answers
+            let bCount = 0;
+            if (q1.value === 'B') bCount++;
+            if (q2.value === 'B') bCount++;
+            if (q3.value === 'B') bCount++;
+            
+            // Show results based on B count
+            showResults(bCount);
+        });
+
+        function showResults(bCount) {
+            // Clear previous classes
+            results.className = 'results';
+            
+            if (bCount >= 2) {
+                // Mostly B's - Likely Mesomorph
+                resultTitle.textContent = "🎯 You're Likely a Mesomorph!";
+                resultText.innerHTML = "There's a good chance you're a mesomorph—complete with an athletic build, natural muscle tone, and a body that responds well to training. Your body naturally tends toward a muscular build and responds well to exercise and strength training.";
+                results.classList.add('mesomorph-result');
+            } else {
+                // Mixed results
+                resultTitle.textContent = "🤔 Mixed Results";
+                resultText.innerHTML = "Your answers were mixed, which suggests you may fall into a hybrid body type, or it might be worth consulting a fitness trainer to dial things in. Many people have characteristics from multiple body types!";
+                results.classList.add('mixed-result');
+            }
+
+            // Show results section
+            results.style.display = 'block';
+            resetBtn.style.display = 'block';
+            form.style.display = 'none';
+        }
+
+        // Reset quiz
+        resetBtn.addEventListener('click', function() {
+            // Clear all radio buttons
+            const radioButtons = document.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach(function(radio) {
+                radio.checked = false;
+            });
+            
+            // Show form, hide results
+            form.style.display = 'block';
+            results.style.display = 'none';
+            resetBtn.style.display = 'none';
+            
+            // Reset submit button
+            submitBtn.disabled = true;
+        });
+
+        // Initial setup
+        checkFormComplete();
+    </script>
+</body>
+</html>
